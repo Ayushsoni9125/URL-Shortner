@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Shortener</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: #ffffff;
+      width: 100%;
+      max-width: 900px;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    label {
+      font-weight: 600;
+      color: #444;
+    }
+
+    input[type="url"] {
+      padding: 14px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      outline: none;
+    }
+
+    input[type="url"]:focus {
+      border-color: #667eea;
+    }
+
+    button {
+      padding: 14px;
+      background: #667eea;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #5a67d8;
+    }
+
+    .short-url {
+      background: #f0f4ff;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    .short-url a {
+      color: #5a67d8;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    h2 {
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    table th,
+    table td {
+      padding: 12px;
+      text-align: left;
+    }
+
+    table th {
+      background: #667eea;
+      color: #fff;
+    }
+
+    table tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+
+    table tr:hover {
+      background: #f1f1f1;
+    }
+
+    table a {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .empty {
+      text-align: center;
+      color: #666;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 600px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      table tr {
+        margin-bottom: 15px;
+      }
+
+      table td {
+        padding-left: 50%;
+        position: relative;
+      }
+
+      table td::before {
+        position: absolute;
+        left: 15px;
+        font-weight: bold;
+      }
+
+      table td:nth-of-type(1)::before { content: "Original URL"; }
+      table td:nth-of-type(2)::before { content: "Short URL"; }
+      table td:nth-of-type(3)::before { content: "Total Clicks"; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>🔗 URL Shortener</h1>
+
+    <!-- FORM -->
+    <form method="POST" action="/url">
+      <label>Enter your URL</label>
+      <input
+        type="url"
+        name="url"
+        placeholder="https://google.com"
+        required
+      >
+      <button type="submit">Generate URL</button>
+    </form>
+
+    <!-- SHOW GENERATED SHORT URL -->
+    <% if (shortUrl) { %>
+      <div class="short-url">
+        Short URL:
+        <a href="/<%= shortUrl %>" target="_blank">
+          http://localhost:3008/<%= shortUrl %>
+        </a>
+      </div>
+    <% } %>
+
+    <!-- SHOW ALL URLS -->
+    <h2>All Shortened URLs</h2>
+
+    <% if (urls && urls.length > 0) { %>
+      <table>
+        <tr>
+          <th>Original URL</th>
+          <th>Short URL</th>
+          <th>Total Clicks</th>
+        </tr>
+
+        <% urls.forEach((u) => { %>
+          <tr>
+            <td>
+              <a href="<%= u.redirectUrl %>" target="_blank">
+                <%= u.redirectUrl %>
+              </a>
+            </td>
+            <td>
+              <a href="/<%= u.shortId %>" target="_blank">
+                http://localhost:3008/<%= u.shortId %>
+              </a>
+            </td>
+            <td>
+              <%= u.visitHistory.length %>
+            </td>
+          </tr>
+        <% }) %>
+      </table>
+    <% } else { %>
+      <p class="empty">No URLs created yet</p>
+    <% } %>
+  </div>
+</body>
+</html>
